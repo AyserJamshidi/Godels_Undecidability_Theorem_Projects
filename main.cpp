@@ -8,7 +8,6 @@ struct prime_struct {
     int power;
 };
 
-// inserted code start
 
 void fillArray(int *arr, int size) // fills the array with a list of numbers from 2 - (number chosen minus 1)
 {
@@ -37,11 +36,24 @@ int primeList(int *arr, int &size) // makes the array a list of prime numbers fr
     return 0;
 }
 
-// inserted code end
 
 void askForPrimeList(std::vector<std::string> &primeList);
 
 prime_struct delimitString(std::string str, const std::string &delimiter);
+
+void symbolNum(std::vector<prime_struct> primeStuff) {
+	std::string thing[] = {"null", "0", "null", "f", "null", "¬", "null", "∨", "null", "∀", "null", "(", "null", ")",
+						   "null", "∧", "null", "∃", "null", "=", "null", "x", "null", "y"};
+
+	//2^3 3^3 5^3 7^1 == f f f 0
+	for (prime_struct x : primeStuff) {
+		if (x.power > (sizeof(thing) / sizeof(thing[0])) || x.power % 2 == 0) {
+			std::cout << "list of primes is unacceptable" << std::endl;
+			exit(-1);
+		} else
+			std::cout << thing[x.power] << " ";
+	}
+}
 
 int main() {
     int size = 0;
@@ -58,7 +70,7 @@ int main() {
         prime_struct structThing = delimitString(curStr, "^");
         primeStuff.push_back(structThing);
         size = structThing.coefficient + 1;
-        std::cout << structThing.coefficient << std::endl << structThing.power << std::endl; // prints out the stuff
+        // std::cout << structThing.coefficient << std::endl << structThing.power << std::endl;
     }
 
 
@@ -66,14 +78,18 @@ int main() {
     primeList(arr, size);
 
 
+	int i = 0;
     for (prime_struct x : primeStuff) {
-        int i = 0;
         if (x.coefficient != arr[i]) {
             std::cout << "list of primes is unacceptable" << std::endl;
+            std::cout << "Expected " << arr[i] << " but got " << x.coefficient << std::endl;
+
             return -1;
         }
+        i++;
     }
 
+    symbolNum(primeStuff);
 
     delete[] arr;
     return 0;
@@ -94,15 +110,16 @@ void askForPrimeList(std::vector<std::string> &primeList) {
 }
 
 prime_struct delimitString(std::string str, const std::string &delimiter) {
-    prime_struct returningPrime;
-    size_t position = 0;
-    std::string curToken;
+	prime_struct returningPrime{};
+	unsigned int position;
+	std::string curToken;
 
-    while ((position = str.find(delimiter)) != std::string::npos) {
-        returningPrime.coefficient = std::stoi(str.substr(0, position));
-        str.erase(0, position + delimiter.length());
-        returningPrime.power = std::stoi(str);
-    }
+	if (str.find(delimiter) != std::string::npos)
+		while ((position = str.find(delimiter)) != std::string::npos) {
+			returningPrime.coefficient = std::stoi(str.substr(0, position));
+			str.erase(0, position + delimiter.length());
+			returningPrime.power = std::stoi(str);
+		}
 
-    return returningPrime;
+	return returningPrime;
 }
